@@ -28,10 +28,26 @@
             console.warn(`QR Code scan error: ${error}`);
         }
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: 250 });
+        // Instantiate the QR code scanner
+        const html5QrCode = new Html5Qrcode("reader");
 
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        // Start scanning using the front camera
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                var cameraId = devices[1].id; // Typically, the front camera is at index 1
+                html5QrCode.start(
+                    cameraId, 
+                    {
+                        fps: 10,    // Scans per second
+                        qrbox: 250  // Size of the scanning box
+                    },
+                    onScanSuccess,
+                    onScanFailure
+                );
+            }
+        }).catch(err => {
+            console.error("Error getting cameras: ", err);
+        });
     </script>
 </body>
 </html>
